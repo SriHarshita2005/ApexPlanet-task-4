@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple To-Do List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 2rem;
+      background-color: #f4f6f8;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+
+    #taskInput {
+      padding: 0.5rem;
+      width: 250px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #addTaskBtn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #addTaskBtn:hover {
+      background-color: #2980b9;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 1.5rem;
+    }
+
+    li {
+      background: #ffffff;
+      margin-bottom: 0.6rem;
+      padding: 0.6rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e1e1e1;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: background 0.2s ease-in-out;
+    }
+
+    li:hover {
+      background: #eef6ff;
+    }
+
+    .deleteBtn {
+      background: #e74c3c;
+      border: none;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .deleteBtn:hover {
+      background-color: #c0392b;
+    }
+
+    @media (max-width: 500px) {
+      #taskInput {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      #addTaskBtn {
+        width: 100%;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My To-Do List</h1>
+
+  <input id="taskInput" type="text" placeholder="Enter new task" />
+  <button id="addTaskBtn">Add Task</button>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskList = document.getElementById('taskList');
+
+    // Load tasks from localStorage
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.forEach(task => createTaskElement(task));
+    }
+
+    // Save tasks to localStorage
+    function saveTasks() {
+      const tasks = [];
+      document.querySelectorAll('#taskList li').forEach(li => {
+        tasks.push(li.firstChild.textContent);
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // Create and add task element
+    function createTaskElement(taskText) {
+      const li = document.createElement('li');
+      li.textContent = taskText;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.className = 'deleteBtn';
+
+      deleteBtn.addEventListener('click', () => {
+        taskList.removeChild(li);
+        saveTasks();
+      });
+
+      li.appendChild(deleteBtn);
+      taskList.appendChild(li);
+    }
+
+    // Add new task
+    function addTask() {
+      const taskText = taskInput.value.trim();
+      if (taskText === '') {
+        alert('Please enter a task!');
+        return;
+      }
+
+      createTaskElement(taskText);
+      saveTasks();
+
+      taskInput.value = '';
+      taskInput.focus();
+    }
+
+    // Event Listeners
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') addTask();
+    });
+
+    // Initialize
+    loadTasks();
+  </script>
+
+</body>
+</html>
